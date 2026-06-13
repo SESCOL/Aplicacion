@@ -247,7 +247,7 @@ function switchTabDirect(name) {
 function startListening() {
   if (unsubscribe) return;
   el('resident-list').innerHTML = '<div class="empty">Cargando…</div>';
-  unsubscribe = col.orderBy('createdAt','asc').onSnapshot(snap => {
+  unsubscribe = col.onSnapshot(snap => {
     residents = snap.docs.map(d => ({id: d.id, ...d.data()}));
     renderResidents();
     updateStats();
@@ -261,7 +261,7 @@ function checkPlate() {
   const raw = (el('verify-input').value || '').trim();
   if (!raw) return;
   const n = normPlate(raw);
-  col.get().then(snap => {
+  col.get({ source: 'server' }).then(snap => {
     const all = snap.docs.map(d => ({id: d.id, ...d.data()}));
     const r = all.find(x => (x.plates||[]).map(normPlate).includes(n)) || null;
     const box = el('result-box');
